@@ -5,11 +5,15 @@ import AdminDashboard from "./pages/AdminDashboard";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
 import TestPage from "./pages/TestPage";
+import StudentsList from "./pages/StudentsList";
+import TeachersList from "./pages/TeachersList";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+	 <Route path="/students" element={<StudentsList />} />
+  	<Route path="/teachers" element={<TeachersList />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />

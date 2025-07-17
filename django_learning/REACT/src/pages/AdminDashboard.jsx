@@ -107,14 +107,14 @@ export default function AdminDashboard() {
         axios.get('/api/teachers/', { headers })
       ]);
       
- const studentsData = studentsResponse.data.results || studentsResponse.data;
-const teachersData = teachersResponse.data.results || teachersResponse.data;
-const students = studentsData;
-const teachers = teachersData;
+    const studentsData = studentsResponse.data.results || studentsResponse.data;
+    const teachersData = teachersResponse.data.results || teachersResponse.data;
+    const students = studentsData;
+    const teachers = teachersData;
 
 
-const activeStudents = students.filter(student => student.status === 'active').length;
-const activeTeachers = teachers.filter(teacher => teacher.status === 'active').length;
+    const activeStudents = students.filter(student => student.status === 'active').length;
+    const activeTeachers = teachers.filter(teacher => teacher.status === 'active').length;
 
 setStats({
   totalStudents: students.length,
@@ -189,16 +189,10 @@ setStats({
     if (token) fetchDashboardStats(token);
   };
 
-  const handleViewAllStudents = () => {
-    // TODO: Navigate to students list page
-    console.log("Navigate to students list");
-  };
-
-  const handleViewAllTeachers = () => {
-    // TODO: Navigate to teachers list page
-    console.log("Navigate to teachers list");
-  };
-
+  
+  const handleViewAllStudents = () => navigate("/students");
+  
+  const handleViewAllTeachers = () => navigate("/teachers");
   // Render Functions
   const renderStatCard = (title, total, active, icon, color = "primary") => (
     <Card elevation={2} sx={{ height: '100%' }}>
