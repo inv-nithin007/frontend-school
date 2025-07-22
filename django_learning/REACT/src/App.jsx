@@ -7,11 +7,13 @@ import StudentDashboard from "./pages/StudentDashboard";
 import TestPage from "./pages/TestPage";
 import StudentsList from "./pages/StudentsList";
 import TeachersList from "./pages/TeachersList";
+import TeacherStudentsView from "./pages/TeacherStudentsView";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+	<Route path="/teacher-students" element={<TeacherStudentsView />} />
 	 <Route path="/students" element={<StudentsList />} />
   	<Route path="/teachers" element={<TeachersList />} />
         <Route path="/login" element={<Login />} />

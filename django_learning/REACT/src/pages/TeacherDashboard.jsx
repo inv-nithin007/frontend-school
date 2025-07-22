@@ -88,7 +88,7 @@ export default function TeacherDashboard() {
                 variant="contained"
                 size="large"
                 sx={{ py: 2 }}
-                onClick={handleViewStudents}
+                onClick={() => navigate('/teacher-students')}
               >
                 View All Students
               </Button>

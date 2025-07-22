@@ -11,7 +11,10 @@ const GRADE_CLASSES = [
   "Grade 3-A", "Grade 3-B", "Grade 4-A", "Grade 4-B",
   "Grade 5-A", "Grade 5-B", "Grade 6-A", "Grade 6-B"
 ];
-
+const STATUS_OPTIONS = [
+  { value: "active", label: "Active" },
+  { value: "inactive", label: "Inactive" }
+];
 export default function RegisterStudent({ onClose }) {
   const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -124,6 +127,8 @@ export default function RegisterStudent({ onClose }) {
               />
             </Grid>
 
+            
+
             <Grid item xs={12} sm={6}>
               <Controller
                 name="lastName"
@@ -202,7 +207,7 @@ export default function RegisterStudent({ onClose }) {
           {/* Academic Information */}
           <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>Academic Information</Typography>
           
-          <Grid container spacing={3}>
+          <Grid container spacing={8}>
             <Grid item xs={12} sm={6}>
               <Controller
                 name="rollNumber"
@@ -290,7 +295,7 @@ export default function RegisterStudent({ onClose }) {
           <Divider sx={{ my: 4 }} />
 
           {/* Login Credentials */}
-          <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>Login Credentials</Typography>
+          <Typography variant="h6" gutterBottom sx={{ mb: 4}}>Login Credentials</Typography>
           
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
@@ -312,8 +317,9 @@ export default function RegisterStudent({ onClose }) {
                     disabled={isSubmitting}
                   />
                 )}
-              />
+              />  </Grid>
             </Grid>
+            
 
             <Grid item xs={12} sm={6}>
               <Controller
@@ -336,8 +342,11 @@ export default function RegisterStudent({ onClose }) {
                 )}
               />
             </Grid>
-          </Grid>
-
+            
+       
+            
+           
+                        
           {/* Action Buttons */}
           <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
             <Button

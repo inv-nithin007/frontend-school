@@ -1,92 +1,103 @@
-import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  CircularProgress,
-  TablePagination
-} from "@mui/material";
-import axios from "../utils/axios";
+import React, { useState, useEffect } from 'react';
+import axios from '../utils/axios';
+import { useNavigate } from 'react-router-dom'; 
 
 export default function TeachersList() {
-  const [rows, setRows]       = useState([]);
-  const [count, setCount]     = useState(0);
-  const [page, setPage]       = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [allTeachers, setAllTeachers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const navigate=useNavigate();
 
-  const fetch = async (p = page, rpp = rowsPerPage) => {
+  const fetchData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("access");
-      const res   = await axios.get("/api/teachers/", {
-        headers: { Authorization: `Bearer ${token}` },
-        params : { limit: rpp, offset: p * rpp }
-      });
-      const data  = res.data.results || res.data;
-      setRows(data);
-      setCount(res.data.count || data.length);
-    } finally {
-      setLoading(false);
+      const response = await axios.get('/api/teachers/');
+      const teachersData = response.data.results;
+      setAllTeachers(teachersData);
+    } catch (error) {
+      console.log('Error:', error);
     }
+    setLoading(false);
   };
 
-  useEffect(() => { fetch(); }, [page, rowsPerPage]);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const handleChangePage      = (_, newPage) => setPage(newPage);
-  const handleChangeRowsPerPage = (e) => {
-    setRowsPerPage(parseInt(e.target.value, 10));
-    setPage(0);
-  };
+  // Calculate pagination on frontend
+  const startIndex = (page - 1) * 5;
+  const endIndex = startIndex + 5;
+  const currentTeachers = allTeachers.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(allTeachers.length / 5);
 
-  if (loading) return (
-    <Container sx={{ mt: 4, textAlign: "center" }}>
-      <CircularProgress />
-    </Container>
-  );
+  const handleBack=()=>{
+    const userData=localStorage.getItem('user')
+    if(userData)
+    {
+      const user=JSON.parse(userData)
+      if (user.role=='admin')
+      {
+         navigate('/admin-dashboard'); 
+      }
+      else if (user.role === 'teacher') {
+      navigate('/teacher-dashboard');
+    } else {
+      navigate('/student-dashboard');
+    }
+    }
+  }
+  if (loading) return <div>Loading...</div>;
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>Teachers</Typography>
-      <Paper elevation={2}>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Subject</TableCell>
-                <TableCell>Status</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((t) => (
-                <TableRow key={t.id}>
-                  <TableCell>{`${t.first_name} ${t.last_name}`}</TableCell>
-                  <TableCell>{t.email}</TableCell>
-                  <TableCell>{t.subject}</TableCell>
-                  <TableCell>{t.status}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={count}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </Container>
+    <div style={{padding:16,maxWidth:900,margin:'0 auto'}}>
+      <h2>Teachers</h2>
+      
+      <table border="1" style={{width: '100%'}}>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Subject</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          {currentTeachers.map(t => (
+            <tr>
+              <td>{t.first_name} {t.last_name}</td>
+              <td>{t.email}</td>
+              <td>{t.subject}</td>
+              
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div style={{display:'flex',gap:20,marginTop:16}}>
+        <button 
+          onClick={() => setPage(page - 1)} 
+          disabled={page === 1}
+        >
+          Previous
+        </button>
+        
+        <span> Page {page} of {totalPages} </span>
+        
+        <button 
+          onClick={() => setPage(page + 1)} 
+          disabled={page >= totalPages}
+        >
+          Next
+        </button>
+
+        <button
+        onClick={handleBack}
+        >back to dashboard</button>
+      </div>
+
+      
+
+      <p>Total: {allTeachers.length} teachers</p>
+    </div>
   );
 }

@@ -1,19 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../utils/axios';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 
-export default function StudentsList() {
+export default function TeacherStudentsView() {
   const [allStudents, setAllStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
-  // Get ALL students once
+
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/students/');
-      const studentsData = response.data.results;
-      setAllStudents(studentsData);
+      
+      const teacherResponse = await axios.get('/api/teachers/');
+      const teachers = teacherResponse.data.results;
+      
+      
+      const userData = JSON.parse(localStorage.getItem('user'));
+      const currentTeacher = teachers.find(teacher => 
+        teacher.email === userData.email
+      );
+
+      
+      const studentsResponse = await axios.get(`/api/teachers/${currentTeacher.id}/students/`);
+      setAllStudents(studentsResponse.data);
+      
     } catch (error) {
       console.log('Error:', error);
     }
@@ -23,34 +34,34 @@ export default function StudentsList() {
   useEffect(() => {
     fetchData();
   }, []);
+  
+  const handleBack = () => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      if (user.role === 'admin') {
+        navigate('/admin-dashboard'); 
+      } else if (user.role === 'teacher') {
+        navigate('/teacher-dashboard');
+      } else {
+        navigate('/student-dashboard');
+      }
+    }
+  };
 
   // Calculate pagination on frontend
-  const startIndex = (page - 1) * 3;
-  const endIndex = startIndex + 3;
+  const startIndex = (page - 1) * 5;
+  const endIndex = startIndex + 5;
   const currentStudents = allStudents.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(allStudents.length / 3);
+  const totalPages = Math.ceil(allStudents.length / 5);
 
   if (loading) return <div>Loading...</div>;
 
-  const handleBack = () => {
-  const userData = localStorage.getItem('user');
-  if (userData) {
-    const user = JSON.parse(userData);
-    if (user.role === 'admin') {
-      navigate('/admin-dashboard');
-    } else if (user.role === 'teacher') {
-      navigate('/teacher-dashboard');
-    } else {
-      navigate('/student-dashboard');
-    }
-  }
-};
-
   return (
-    <div style={{padding:16,maxWidth:900,margin:'0 auto'}}>
-      <h2>Students</h2>
+    <div>
+      <h2>My Students</h2>
       
-      <table border="3" style={{width: '100%',minWidth:300}}>
+      <table border="1" style={{width: '100%'}}>
         <thead>
           <tr>
             <th>Name</th>
@@ -61,7 +72,7 @@ export default function StudentsList() {
         </thead>
         <tbody>
           {currentStudents.map(s => (
-            <tr>
+            <tr key={s.id}>
               <td>{s.first_name} {s.last_name}</td>
               <td>{s.email}</td>
               <td>{s.roll_number}</td>
@@ -71,7 +82,7 @@ export default function StudentsList() {
         </tbody>
       </table>
 
-      <div style={{ display: 'flex', gap: 12,marginTop:16}}>
+      <div>
         <button 
           onClick={() => setPage(page - 1)} 
           disabled={page === 1}
@@ -87,20 +98,15 @@ export default function StudentsList() {
         >
           Next
         </button>
-
-            <button 
-        onClick={handleBack}
-        >
-          back to dashboard
-        </button>
-        
       </div>
-        
-      
 
+      <div style={{marginBottom:'20px',marginTop:'30px'}}>
+        <button onClick={handleBack}>
+          Back to Dashboard
+        </button>
+      </div>
 
       <p>Total: {allStudents.length} students</p>
     </div>
-    
   );
 }
