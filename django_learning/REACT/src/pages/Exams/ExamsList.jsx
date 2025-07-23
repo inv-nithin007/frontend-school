@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from '../utils/axios';
+import axios from '../../utils/axios';
 import { useNavigate } from 'react-router-dom';
 
-export default function TeacherStudentsView() {
-  const [allStudents, setAllStudents] = useState([]);
+export default function ExamsList() {
+  const [allExams, setAllExams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
@@ -11,20 +11,9 @@ export default function TeacherStudentsView() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      
-      const teacherResponse = await axios.get('/api/teachers/');
-      const teachers = teacherResponse.data.results;
-      
-      
-      const userData = JSON.parse(localStorage.getItem('user'));
-      const currentTeacher = teachers.find(teacher => 
-        teacher.email === userData.email
-      );
-
-      
-      const studentsResponse = await axios.get(`/api/teachers/${currentTeacher.id}/students/`);
-      setAllStudents(studentsResponse.data);
-      
+      const response = await axios.get('/api/exams/');
+      const examsData = response.data.results;
+      setAllExams(examsData);
     } catch (error) {
       console.log('Error:', error);
     }
@@ -49,41 +38,47 @@ export default function TeacherStudentsView() {
     }
   };
 
- 
+  const handleStartExam = (examId) => {
+    navigate(`/take-exam/${examId}`);
+  };
+
+  // Calculate pagination on frontend
   const startIndex = (page - 1) * 5;
   const endIndex = startIndex + 5;
-  const currentStudents = allStudents.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(allStudents.length / 5);
+  const currentExams = allExams.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(allExams.length / 5);
 
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div style={{maxWidth:'900px',margin:'0 auto'}}>
-      <div style={{textAlign:'center'}}>
+    <div>
+      <h2>Available Exams</h2>
       
-      
-      <h2>My Students</h2>
-      </div >
-
-
-      <table border="5" style={{width: '100%'}}>
+      <table border="1" style={{width: '100%'}}>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Roll Number</th>
-            <th>Class</th>
-            
+            <th>Title</th>
+            <th>Subject</th>
+            <th>Duration</th>
+            <th>Total Marks</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {currentStudents.map(s => (
-            <tr key={s.id}>
-              <td >{s.first_name} {s.last_name}</td>
-              <td>{s.email}</td>
-              <td>{s.roll_number}</td>
-              <td>{s.class_grade}</td>
-              
+          {currentExams.map(exam => (
+            <tr key={exam.id}>
+              <td>{exam.title}</td>
+              <td>{exam.subject}</td>
+              <td>{exam.duration_minutes} mins</td>
+              <td>{exam.total_marks}</td>
+              <td>
+                <button 
+                  onClick={() => handleStartExam(exam.id)}
+                  style={{ padding: '5px 10px' }}
+                >
+                  Start Exam
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -113,7 +108,7 @@ export default function TeacherStudentsView() {
         </button>
       </div>
 
-      <p>Total: {allStudents.length} students</p>
+      <p>Total: {allExams.length} exams</p>
     </div>
   );
 }

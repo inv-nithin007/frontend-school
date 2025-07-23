@@ -1,7 +1,7 @@
 import { Container, Box, Typography, Grid, Card, CardContent, Button } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../utils/axios"; // Ready for future API calls
+import axios from "../utils/axios"; 
 
 export default function TeacherDashboard() {
   const [user, setUser] = useState(null);
@@ -33,24 +33,16 @@ export default function TeacherDashboard() {
 
   const handleViewStudents = async () => {
     try {
-      // Example API call using interceptor
+      
       const response = await axios.get('/api/students/');
       console.log("Students:", response.data);
-      // Handle the response - maybe show in a modal or navigate to students page
+
     } catch (error) {
       console.error("Error fetching students:", error);
     }
   };
 
-  const handleCreateExam = async () => {
-    try {
-      // Example - could navigate to exam creation page
-      console.log("Navigate to exam creation");
-      // Or make API call to get exam templates, etc.
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+
 
   if (!user) {
     return (
@@ -99,7 +91,7 @@ export default function TeacherDashboard() {
                 variant="contained"
                 size="large"
                 sx={{ py: 2 }}
-                onClick={handleCreateExam}
+                onClick={()=>navigate('/create-exam')}
               >
                 Create Exam
               </Button>
@@ -123,6 +115,17 @@ export default function TeacherDashboard() {
               >
                 Update Profile
               </Button>
+
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={()=>navigate('/change')}
+                size="large"
+                sx={{ mt: 3 }}
+              >
+                Change Password
+              </Button>
+              
             </Grid>
           </Grid>
         </Box>

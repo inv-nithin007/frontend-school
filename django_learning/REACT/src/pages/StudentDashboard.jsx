@@ -33,10 +33,7 @@ export default function StudentDashboard() {
 
   const handleViewTeachers = async () => {
     try {
-      // Example of how to make API calls with interceptor
-      const response = await axios.get('/api/teachers/');
-      console.log("Teachers:", response.data);
-      // Handle the response - maybe show in a modal or navigate to teachers page
+      navigate('/student-teacher');
     } catch (error) {
       console.error("Error fetching teachers:", error);
     }
@@ -44,10 +41,17 @@ export default function StudentDashboard() {
 
   const handleViewExams = async () => {
     try {
-      // Example API call for exams
-      const response = await axios.get('/api/exams/');
-      console.log("Exams:", response.data);
-      // Handle the response
+      navigate('/exam-list');
+    } catch (error) {
+      console.error("Error fetching exams:", error);
+    }
+  };
+
+  
+  
+  const handleViewProfile= async () => {
+    try {
+      navigate('/student-profile');
     } catch (error) {
       console.error("Error fetching exams:", error);
     }
@@ -62,6 +66,7 @@ export default function StudentDashboard() {
       </Container>
     );
   }
+  
 
   return (
     <Container maxWidth="lg">
@@ -111,6 +116,7 @@ export default function StudentDashboard() {
                 variant="outlined"
                 size="large"
                 sx={{ py: 2 }}
+                onClick={handleViewProfile}
               >
                 Show Profile
               </Button>
@@ -124,8 +130,19 @@ export default function StudentDashboard() {
               >
                 Update Profile
               </Button>
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={()=>navigate('/change')}
+                size="large"
+                sx={{ mt: 3 }}
+              >
+                Change Password
+              </Button>
+
             </Grid>
           </Grid>
+           
         </Box>
       </Box>
     </Container>

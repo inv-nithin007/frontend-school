@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 
-// Material UI imports
+
 import {
   Container,
   Paper,
@@ -21,7 +21,7 @@ export default function Login() {
   
   const navigate = useNavigate();
   
-  // 3. Form hook
+  
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
 
   
@@ -53,8 +53,8 @@ export default function Login() {
     <Container maxWidth="sm">
       <Box sx={{ marginTop: 8, textAlign: 'center' }}>
         
-        {/* Title */}
-        <Typography variant="h4" sx={{ marginBottom: 2 }}>
+       
+        <Typography variant="h4" sx={{ mb: 2 }}>
           Login
         </Typography>
         
@@ -62,17 +62,17 @@ export default function Login() {
           School Management System
         </Typography>
 
-        {/* Login Box */}
+        
         <Paper sx={{ padding: 4, maxWidth: 400, margin: '0 auto' }}>
           
-          {/* Error Message */}
+          
           {errorMessage && (
             <Alert severity="error" sx={{ marginBottom: 2 }}>
               {errorMessage}
             </Alert>
           )}
 
-          {/* Login Form */}
+          
           <form onSubmit={handleSubmit(onLogin)}>
             
             {/* Username Input */}
@@ -85,7 +85,7 @@ export default function Login() {
               helperText={errors.username?.message}
             />
 
-            {/* Password Input */}
+            
             <TextField
               fullWidth
               label="Password"
@@ -108,6 +108,17 @@ export default function Login() {
             </Button>
             
           </form>
+
+          <Button
+              type="submit"
+              fullWidth
+              sx={{mt:2}}
+              variant="contained"
+              size="large"
+              onClick={()=>navigate('/forgot')}
+            >
+              Forgot Password
+            </Button>
         </Paper>
       </Box>
     </Container>

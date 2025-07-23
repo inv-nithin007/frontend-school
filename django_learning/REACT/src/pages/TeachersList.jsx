@@ -49,7 +49,7 @@ export default function TeachersList() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div style={{padding:16,maxWidth:900,margin:'0 auto'}}>
+    <div style={{maxWidth:900,margin:'0 auto'}}>
       <h2>Teachers</h2>
       
       <table border="1" style={{width: '100%'}}>
