@@ -17,7 +17,7 @@ export default function ResetPassword() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { token } = useParams(); // Get token from URL
+  const { token } = useParams(); 
 
   const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -69,7 +69,7 @@ export default function ResetPassword() {
       
       {message && (
         <Alert 
-          severity={isSuccess ? 'success' : 'error'}
+          
           sx={{ mb: 2 }}
         >
           {message}
@@ -156,7 +156,7 @@ export default function ResetPassword() {
           <Button 
             variant="outlined" 
             onClick={() => navigate('/forgot')}
-            size="small"
+            
           >
             Request New Reset
           </Button>

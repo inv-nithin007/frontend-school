@@ -1,8 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../utils/axios';
 import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  
+} from '@mui/material';
 
-export default function TeacherStudentsView() {
+export default function StudentsList() {
   const [allStudents, setAllStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -11,20 +24,9 @@ export default function TeacherStudentsView() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      
-      const teacherResponse = await axios.get('/api/teachers/');
-      const teachers = teacherResponse.data.results;
-      
-      
-      const userData = JSON.parse(localStorage.getItem('user'));
-      const currentTeacher = teachers.find(teacher => 
-        teacher.email === userData.email
-      );
-
-      
-      const studentsResponse = await axios.get(`/api/teachers/${currentTeacher.id}/students/`);
-      setAllStudents(studentsResponse.data);
-      
+      const response = await axios.get('/api/students/');
+      const studentsData = response.data.results;
+      setAllStudents(studentsData);
     } catch (error) {
       console.log('Error:', error);
     }
@@ -34,13 +36,18 @@ export default function TeacherStudentsView() {
   useEffect(() => {
     fetchData();
   }, []);
-  
+
+  const startIndex = (page - 1) * 3;
+  const endIndex = startIndex + 3;
+  const currentStudents = allStudents.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(allStudents.length / 3);
+
   const handleBack = () => {
     const userData = localStorage.getItem('user');
     if (userData) {
       const user = JSON.parse(userData);
       if (user.role === 'admin') {
-        navigate('/admin-dashboard'); 
+        navigate('/admin-dashboard');
       } else if (user.role === 'teacher') {
         navigate('/teacher-dashboard');
       } else {
@@ -49,71 +56,77 @@ export default function TeacherStudentsView() {
     }
   };
 
- 
-  const startIndex = (page - 1) * 5;
-  const endIndex = startIndex + 5;
-  const currentStudents = allStudents.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(allStudents.length / 5);
-
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <Box textAlign="center" mt={10}>
+        
+        <Typography>Loading...</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <div style={{maxWidth:'900px',margin:'0 auto'}}>
-      <div style={{textAlign:'center'}}>
-      
-      
-      <h2>My Students</h2>
-      </div >
+    <Box sx={{ p: 2,maxWidth: '50%', margin: '0 auto' }}>
+      <Typography variant="h4" gutterBottom>
+        Students
+      </Typography>
+      <Paper elevation={10}>
+      <TableContainer >
+        <Table border={3}>
+          <TableHead >
+            <TableRow>
+              <TableCell><strong>Name</strong></TableCell>
+              <TableCell><strong>Email</strong></TableCell>
+              <TableCell><strong>Roll Number</strong></TableCell>
+              <TableCell><strong>Class</strong></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {currentStudents.map((student, index) => (
+              <TableRow >
+                <TableCell>{student.first_name} {student.last_name}</TableCell>
+                <TableCell>{student.email}</TableCell>
+                <TableCell>{student.roll_number}</TableCell>
+                <TableCell>{student.class_grade}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      </Paper>
 
-
-      <table border="5" style={{width: '100%'}}>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Roll Number</th>
-            <th>Class</th>
-            
-          </tr>
-        </thead>
-        <tbody>
-          {currentStudents.map(s => (
-            <tr key={s.id}>
-              <td >{s.first_name} {s.last_name}</td>
-              <td>{s.email}</td>
-              <td>{s.roll_number}</td>
-              <td>{s.class_grade}</td>
-              
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <div>
-        <button 
+      <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+        <Button 
+          variant="outlined"
           onClick={() => setPage(page - 1)} 
           disabled={page === 1}
         >
           Previous
-        </button>
+        </Button>
         
-        <span> Page {page} of {totalPages} </span>
+        <Typography>
+          Page {page} of {totalPages}
+        </Typography>
         
-        <button 
+        <Button 
+          variant="outlined"
           onClick={() => setPage(page + 1)} 
           disabled={page >= totalPages}
         >
           Next
-        </button>
-      </div>
+        </Button>
 
-      <div style={{marginBottom:'20px',marginTop:'30px'}}>
-        <button onClick={handleBack}>
+        <Button 
+          variant="contained"
+          onClick={handleBack}
+        >
           Back to Dashboard
-        </button>
-      </div>
+        </Button>
+      </Box>
 
-      <p>Total: {allStudents.length} students</p>
-    </div>
+      <Typography sx={{ mt: 2 }}>
+        Total: {allStudents.length} students
+      </Typography>
+    </Box>
   );
 }

@@ -34,11 +34,6 @@ export default function CreateExam() {
   });
 
   const addQuestion = (data) => {
-    if (data.question_text === '' || data.option_a === '' || data.option_b === '') {
-      setMessage('Please fill question text and at least 2 options');
-      return;
-    }
-
     // Add new question to list
     const newQuestions = [];
     for (let i = 0; i < questions.length; i++) {
@@ -92,7 +87,7 @@ export default function CreateExam() {
       setMessage('Exam created successfully! Redirecting...');
       setTimeout(() => {
         navigate('/teacher-dashboard');
-      }, 2000);
+      }, );
       
     } catch (error) {
       setMessage('Error creating exam');
@@ -102,7 +97,7 @@ export default function CreateExam() {
   return (
     
     
-    <Box maxWidth="900px" margin="0 auto" padding={3}>
+    <Box maxWidth="1000px" margin="0 auto" padding={3}>
 
 
     
@@ -167,6 +162,10 @@ export default function CreateExam() {
                 min: {
                   value: 1,
                   message: 'Duration must be positive'
+                },
+                max: {
+                  value: 900,
+                  message: 'Duration cannot be more than 15 hours'
                 }
               })}
               fullWidth
@@ -200,6 +199,17 @@ export default function CreateExam() {
                 min: {
                   value: 0,
                   message: 'Passing marks cannot be negative'
+                },
+                validate: (value) => {
+                  const totalMarks = examForm.getValues('total_marks');
+                  if (totalMarks && Number(totalMarks) >= 0 && Number(value) >= 0) {
+                    const totalMarksNum = parseInt(totalMarks);
+                    const passingMarksNum = parseInt(value);
+                    if (passingMarksNum >= totalMarksNum) {
+                      return 'Passing marks must be less than total marks';
+                    }
+                  }
+                  return true;
                 }
               })}
               fullWidth
@@ -223,7 +233,7 @@ export default function CreateExam() {
       </Paper>
 
       
-      <Paper elevation={1} sx={{ p: 3, mb: 3 }}>
+      <Paper elevation={10} sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" >Add Questions</Typography>
         <form onSubmit={questionForm.handleSubmit(addQuestion)}>
           
@@ -265,17 +275,21 @@ export default function CreateExam() {
           </Box>
           
           <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-            <TextField
-              {...questionForm.register('option_c')}
+              <TextField
+              {...questionForm.register('option_c', { required: 'Option C is required' })}
               fullWidth
-              label="Option C (optional)"
+              label="Option C"
               placeholder="Option C"
+              error={!!questionForm.formState.errors.option_c}
+              helperText={questionForm.formState.errors.option_c?.message}
             />
-            <TextField
-              {...questionForm.register('option_d')}
+             <TextField
+              {...questionForm.register('option_d', { required: 'Option D is required' })}
               fullWidth
-              label="Option D (optional)"
+              label="Option D"
               placeholder="Option D"
+              error={!!questionForm.formState.errors.option_d}
+              helperText={questionForm.formState.errors.option_d?.message}
             />
           </Box>
           
@@ -300,6 +314,21 @@ export default function CreateExam() {
                 min: {
                   value: 1,
                   message: 'Marks must be at least 1'
+                },
+                validate: (value) => {
+                  const examTotalMarks = examForm.getValues('total_marks');
+                  if (!examTotalMarks) {
+                    return 'Please set exam total marks first';
+                  }
+                  
+                  // Calculate current total of all question marks
+                  const currentTotal = questions.reduce((sum, q) => sum + parseInt(q.marks || 0), 0);
+                  const newTotal = currentTotal + parseInt(value || 0);
+                  
+                  if (newTotal > parseInt(examTotalMarks)) {
+                    return `Total question marks (${newTotal}) cannot exceed exam total marks (${examTotalMarks})`;
+                  }
+                  return true;
                 }
               })}
               type="number"

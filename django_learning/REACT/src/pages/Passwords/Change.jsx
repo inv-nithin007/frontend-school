@@ -17,7 +17,8 @@ export default function ChangePassword() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const { register, handleSubmit, formState: { errors }, watch, reset } = useForm();
+  const watchNewPassword = watch('new_password');
 
   const changePassword = async (data) => {
     setIsLoading(true);
@@ -57,7 +58,7 @@ export default function ChangePassword() {
       
       {message && (
         <Alert 
-          severity={isSuccess ? 'success' : 'error'}
+          
           sx={{ mb: 2 }}
         >
           {message}
@@ -100,7 +101,9 @@ export default function ChangePassword() {
 
           <TextField
             {...register('confirm_password', { 
-              required: 'Please confirm your new password'
+              required: 'Please confirm your new password',
+              validate: value => 
+                value === watchNewPassword || 'Passwords do not match'
             })}
             fullWidth
             type="password"

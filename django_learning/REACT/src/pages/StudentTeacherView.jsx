@@ -1,9 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { 
+  Box, 
+  Typography, 
+  Button, 
+  Alert, 
+  Paper
+} from '@mui/material';
 
 export default function StudentTeacherView() {
   const navigate = useNavigate();
-  
   
   const userData = JSON.parse(localStorage.getItem('user'));
   
@@ -19,35 +25,61 @@ export default function StudentTeacherView() {
   };
 
   return (
-    <div style={{padding: 20, maxWidth: 600, margin: '0 auto'}}>
-      <div style={{textAlign:'center'}}>
-      <h1>Your Assigned Teacher</h1>
-      </div>
+    <Box sx={{ padding: 3, maxWidth: 600, margin: '0 auto' }}>
+      <Box textAlign="center" mb={3}>
+        <Typography variant="h4" gutterBottom>
+          Your Assigned Teacher
+        </Typography>
+      </Box>
       
       {userData.assigned_teacher_name ? (
-        <div style={{ padding: 20, borderRadius: 20,backgroundColor:'gray'}}>
-          <h2>{userData.assigned_teacher_name}</h2>
-          <p><strong>Email:</strong> {userData.assigned_teacher_email}</p>
-          <p><strong>Phone:</strong> {userData.assigned_teacher_phone}</p>
-          <p><strong>Subject:</strong> {userData.assigned_teacher_subject}</p>
-          <p><strong>Qualification:</strong> {userData.assigned_teacher_qualification}</p>
-          <p><strong>Experience:</strong> {userData.assigned_teacher_experience} years</p>
-        </div>
+        <Paper elevation={10} sx={{ p: 3, mb: 3, backgroundColor: '#f5f5f5' }}>
+          <Typography  variant="h5"  sx={{ mb: 1 }} color="gray">
+            {userData.assigned_teacher_name}
+             
+          </Typography>
+          
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            <Typography component="span" fontWeight="bold">Email:</Typography> {userData.assigned_teacher_email}
+          </Typography>
+          
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            <Typography component="span" fontWeight="bold">Phone:</Typography> {userData.assigned_teacher_phone}
+          </Typography>
+          
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            <Typography component="span" fontWeight="bold">Subject:</Typography> {userData.assigned_teacher_subject}
+          </Typography>
+          
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            <Typography component="span" fontWeight="bold">Qualification:</Typography> {userData.assigned_teacher_qualification}
+          </Typography>
+          
+          <Typography variant="body1">
+            <Typography component="span" fontWeight="bold">Experience:</Typography> {userData.assigned_teacher_experience} years
+          </Typography>
+        </Paper>
       ) : (
-        <div style={{ padding: 20, borderRadius: 8, textAlign: 'center', backgroundColor: '#fff3cd'}}>
-          <h3>No Teacher Assigned</h3>
-          <p>You don't have any teacher assigned yet. Please contact the admin.</p>
-        </div>
+        <Alert >
+          <Typography variant="h2" gutterBottom>
+            No Teacher Assigned
+          </Typography>
+          <Typography variant="h6">
+            You don't have any teacher assigned yet. Please contact the admin.
+          </Typography>
+        </Alert>
       )}
 
-      <div style={{marginTop: 30}}>
-        <button onClick={handleBack} style={{padding: '10px', fontSize: '20px'}}>
+      <Box textAlign="center">
+        <Button 
+          onClick={handleBack} 
+          variant="contained" 
+          size="large"
+          sx={{ minWidth: 200 }}
+        >
           Back to Dashboard
-        </button>
-      </div>
-
-    
-     
-    </div>
+        </Button>
+      </Box>
+    </Box>
   );
 }

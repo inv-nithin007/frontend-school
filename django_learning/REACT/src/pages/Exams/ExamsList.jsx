@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../utils/axios';
 import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+} from '@mui/material';
 
 export default function ExamsList() {
   const [allExams, setAllExams] = useState([]);
@@ -39,7 +51,7 @@ export default function ExamsList() {
   };
 
   const handleStartExam = (examId) => {
-    navigate(`/take-exam/${examId}`);
+    navigate(`/attend/${examId}`);
   };
 
   // Calculate pagination on frontend
@@ -48,67 +60,88 @@ export default function ExamsList() {
   const currentExams = allExams.slice(startIndex, endIndex);
   const totalPages = Math.ceil(allExams.length / 5);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <Box textAlign="center" mt={4}>
+        
+        <Typography>Loading...</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <div>
-      <h2>Available Exams</h2>
-      
-      <table border="1" style={{width: '100%'}}>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Subject</th>
-            <th>Duration</th>
-            <th>Total Marks</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentExams.map(exam => (
-            <tr key={exam.id}>
-              <td>{exam.title}</td>
-              <td>{exam.subject}</td>
-              <td>{exam.duration_minutes} mins</td>
-              <td>{exam.total_marks}</td>
-              <td>
-                <button 
-                  onClick={() => handleStartExam(exam.id)}
-                  style={{ padding: '5px 10px' }}
-                >
-                  Start Exam
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <Box sx={{ p: 2, maxWidth: 1000, margin: '0 auto' }}>
+      <Typography variant="h4" gutterBottom textAlign='center'>
+        Available Exams
+      </Typography>
+      <Paper elevation={15}>
+      <TableContainer >
+        <Table >
+          <TableHead >
+            <TableRow>
+              <TableCell><strong>Title</strong></TableCell>
+              <TableCell><strong>Subject</strong></TableCell>
+              <TableCell><strong>Duration</strong></TableCell>
+              <TableCell><strong>Total Marks</strong></TableCell>
+              <TableCell><strong>Action</strong></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {currentExams.map(exam => (
+              <TableRow key={exam.id}>
+                <TableCell>{exam.title}</TableCell>
+                <TableCell>{exam.subject}</TableCell>
+                <TableCell>{exam.duration_minutes} mins</TableCell>
+                <TableCell>{exam.total_marks}</TableCell>
+                <TableCell>
+                  <Button 
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleStartExam(exam.id)}
+                    size="small"
+                  >
+                    Start Exam
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      </Paper>
 
-      <div>
-        <button 
+      <Box sx={{ display: 'flex', gap: 2, mt: 2, alignItems: 'center' }}>
+        <Button 
+          variant="outlined"
           onClick={() => setPage(page - 1)} 
           disabled={page === 1}
         >
           Previous
-        </button>
+        </Button>
         
-        <span> Page {page} of {totalPages} </span>
+        <Typography>
+          Page {page} of {totalPages}
+        </Typography>
         
-        <button 
+        <Button 
+          variant="outlined"
           onClick={() => setPage(page + 1)} 
           disabled={page >= totalPages}
         >
           Next
-        </button>
-      </div>
+        </Button>
 
-      <div style={{marginBottom:'20px',marginTop:'30px'}}>
-        <button onClick={handleBack}>
+        <Button 
+          variant="contained"
+          onClick={handleBack}
+        >
           Back to Dashboard
-        </button>
-      </div>
+        </Button>
+      </Box>
 
-      <p>Total: {allExams.length} exams</p>
-    </div>
+      <Typography sx={{ mt: 2 }}>
+        Total: {allExams.length} exams
+      </Typography>
+    </Box>
   );
 }
